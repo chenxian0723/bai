@@ -1,116 +1,14 @@
 <template>
 	<view class="content">
-		<!-- drawer -->
-		<uni-drawer
-		class="drawer"
-		:visible="ifShowDrawer" 
-		@close="hidDrawer"
-		>
-			<view 
-			class="drawer-main"
-			>	
-				<view class="status-bar"></view>
-				<!-- Vip -->
-				<view class="swiper-vip">
-					<view class="vip-top">
-						<view class="vip-name">
-							开通黑胶VIP
-						</view>
-						<view class="vip-msg">
-							会员中心
-						</view>
-					</view>
-					<view class="vip-bottom">
-						加入黑胶VIP, 立享超12项专属特权
-					</view>
-				</view>
-				<!-- 开通 -->
-				<view class="vip-handle">
-					<view class="handle-left">
-						<view class="left-name">
-							首月开通5元
-						</view>
-						<view class="left-msg">
-							新用户专属优惠, 快来加入吧 !
-						</view>
-					</view>
-					<view class="handle-right">
-						<text class="handle-cion text-white cuIcon-right"></text>
-					</view>
-				</view>
-				<!-- main -->
-				<view class="drawer-other">
-					<!-- login -->
-					<view class="drawer-login">
-						<view class="login-title">
-							手机电脑多端同步, 尽享海量高品质音乐
-						</view>
-						<view class="login-btn">
-							立即登录
-						</view>
-					</view>
-					<!-- menu -->
-					<view class="other-menu">
-						<view class="menu-item" v-for="(item, index) in drawerMenuList" :key="index">
-							<text class="menu-icon text-red" :class="item.icon"></text>
-							<view class="item-name">
-								{{item.name}}
-							</view>
-						</view>
-					</view>
-				</view>
-			</view>
-			<!-- menu1 -->
-			<view class="drawer-menu">
-				<view class="menu-item" v-for="(item, index) in menuItemList" :key="index">
-					<view class="menu-item-left">
-						<text class="menu-item-icon text-black" :class="item.icon"></text>
-						<view class="menu-item-name">
-							{{item.name}}
-						</view>
-					</view>
-					<view class="menu-item-right">
-						{{item.msg}}
-					</view>
-				</view>	
-			</view>
-			<!--  -->
-			<view class="drawer-bottom">
-				<view class="bottom-item">
-					<text class="item-icon text-black cuIcon-attention"></text>
-					<view class="">
-						夜间模式
-					</view>
-				</view>
-				<view class="bottom-item">
-					<text class="item-icon text-black cuIcon-settings"></text>
-					<view class="">
-						设置
-					</view>
-				</view>
-				<view class="bottom-item">
-					<text class="item-icon text-black cuIcon-pullright"></text>
-					<view class="">
-						退出
-					</view>
-				</view>
-			</view>
-		</uni-drawer>
-		<!-- header -->
-		<Header 
-		:current="swiperCurrent" 
-		@showDrawer="showDrawer"
-		></Header>
-		<!-- tab选项卡实现 -->
 		<swiper
 		class="main-swiper"
 		:indicator-dots="false"
 		:autoplay="false"
 		:current="swiperCurrent"
-		@change="changeCurrent"
+		@change="changeView"
 		>
 			<swiper-item>
-				<scroll-view scroll-y="true" style="height: 100%;">
+				<scroll-view scroll-y style="height: 1800rpx;width: 100%;">
 					<Discover></Discover>
 				</scroll-view>
 			</swiper-item>
@@ -126,7 +24,7 @@
 			</swiper-item>
 			<swiper-item>
 				<scroll-view scroll-y="true" style="height: 100%;">
-					<Chat></Chat>
+					<Tools></Tools>
 				</scroll-view>
 			</swiper-item>
 			<swiper-item>
@@ -135,142 +33,103 @@
 				</scroll-view>
 			</swiper-item>
 		</swiper>
-
-		<!-- BottomBar -->
-		<Bottom
-		:current="swiperCurrent" 
-		@changeView="changeView"
-		></Bottom>
+		<!-- 与包裹页面所有内容的元素u-page同级，且在它的下方 -->
+		<u-tabbar v-model="current" height=105 active-color=#ff5500 :list="list" @change="changeCurrent"></u-tabbar>
+	
 	</view>
 </template>
 
 <script>
-	import uniDrawer from '../../components/uni-drawer/uni-drawer.vue'
-	import Header from '../../components/Header/index.vue';
-	import Bottom from '../../components/Bottom/index.vue';
-	import Discover from '../../components/Discover/index.vue';
-	import Group from '../../components/Group/index.vue';
-	import Enjoy from '../../components/Enjoy/index.vue';
-	import Chat from '../../components/Chat/index.vue';
-	import Mine from '../../components/Mine/index.vue';
+	
+	import Header from '../../components/Header/header.vue';
+	import Message from '../../components/Header/Message/message.vue';
+	import Search from '../../components/Header/Search/search.vue';
+	import Scan from '../../components/Header/Scan/scan.vue'
+	import Setting from '../../components/Header/Setting/setting.vue'
+	
+	import Bottom from '../../components/NavPages/bottom.vue';
+	import Discover from '../../components/NavPages/Discover/discover.vue';
+	import Group from '../../components/NavPages/Group/group.vue';
+	import Enjoy from '../../components/NavPages/Enjoy/enjoy.vue';
+	import Tools from '../../components/NavPages/Tools/tools.vue';
+	import Mine from '../../components/NavPages/Mine/mine.vue';
+	
+	
 	export default {
 		components:{
-			uniDrawer,
 			Header,
+			Message,
+			Search,
+			Scan,
+			Setting,
 			Bottom,
 			Discover,
 			Group,
 			Enjoy,
-			Chat,
-			Mine
+			Tools,
+			Mine,
+		},
+		props:{
 		},
 		data() {
 			return {
-				ifShowDrawer: false,
-				swiperCurrent: 1,
-				drawerMenuList:[{
-						'id': 0,
-						'name': '我的消息',
-						'icon': 'cuIcon-mail'
-					},{
-						'id': 1,
-						'name': '我的好友',
-						'icon': 'cuIcon-friend'
-					},{
-						'id': 2,
-						'name': '个人主页',
-						'icon': 'cuIcon-home'
-					},{
-						'id': 3,
-						'name': '个性装扮',
-						'icon': 'cuIcon-clothes'
+				list: [{
+						iconPath: "eye",
+						selectedIconPath: "eye-fill",
+						text: '发现',
+						count: 2,
+						isDot: true,
+						customIcon: false,
+					},
+					{
+						iconPath: "moments",
+						selectedIconPath: "moments-circel-fill",
+						text: '圈子',
+						customIcon: false,
+					},
+					{
+						iconPath: "heart",
+						selectedIconPath: "heart-fill",
+						text: '喜爱',
+						customIcon: false,
+					},
+					{
+						iconPath: "grid",
+						selectedIconPath: "grid-fill",
+						text: '工具',
+						customIcon: false,
+					},
+					{
+						iconPath: "account",
+						selectedIconPath: "account-fill",
+						text: '我的',
+						count: 23,
+						isDot: false,
+						customIcon: false,
 					},
 				],
-				menuItemList:[{
-						'id': 0,
-						'icon': 'cuIcon-magic',
-						'name': '听歌识曲',
-						'msg': '可识别其他app歌曲'
-					},{
-						'id': 1,
-						'icon': 'cuIcon-ticket',
-						'name': '演出',
-						'msg': ''
-					},{
-						'id': 2,
-						'icon': 'cuIcon-shop',
-						'name': '商城',
-						'msg': ''
-					},{
-						'id': 3,
-						'icon': 'cuIcon-location',
-						'name': '附近的人',
-						'msg': ''
-					},{
-						'id': 4,
-						'icon': 'cuIcon-discover',
-						'name': '游戏推荐',
-						'msg': ''
-					},{
-						'id': 5,
-						'icon': 'cuIcon-notice',
-						'name': '口袋铃铛',
-						'msg': ''
-					},{
-						'id': 6,
-						'icon': 'cuIcon-cart',
-						'name': '我的订单',
-						'msg': ''
-					},{
-						'id': 7,
-						'icon': 'cuIcon-time',
-						'name': '定时停止播放',
-						'msg': ''
-					},{
-						'id': 8,
-						'icon': 'cuIcon-scan',
-						'name': '扫一扫',
-						'msg': ''
-					},{
-						'id': 9,
-						'icon': 'cuIcon-countdown',
-						'name': '音乐闹钟',
-						'msg': ''
-					},{
-						'id': 10,
-						'icon': 'cuIcon-wifi',
-						'name': '在线听歌免流量',
-						'msg': ''
-					},{
-						'id': 11,
-						'icon': 'cuIcon-choiceness',
-						'name': '优惠券',
-						'msg': ''
-					}
-				],
+				current: 0,
+				swiperCurrent: 0,
 			}
 		},
 		onLoad() {
 			
 		},
 		methods: {
-			changeCurrent(e){
-				this.swiperCurrent = e.detail.current;
+			changeCurrent(index){
+				this.swiperCurrent = index
 			},
 			changeView(e){
-				this.swiperCurrent = e;
-			},
-			showDrawer(e){
-				this.ifShowDrawer = e;
-				
-			},
-			hidDrawer(){
-				this.ifShowDrawer = false;
-			},
+				this.current = e.detail.current
+			}
 		}
 	}
 </script>
 
 <style>
-	@import url("./index.css");
+	.main-swiper{
+		width: 100%;
+		flex: 1;
+		margin-bottom: 90upx;
+	}
 </style>
